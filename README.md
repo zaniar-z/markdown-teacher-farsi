@@ -14,6 +14,12 @@
 
 ## اجرا
 
+### آنلاین (GitHub Pages)
+
+https://zaniar-z.github.io/markdown-teacher-farsi/markdown-teacher.html
+
+### لوکال
+
 فایل را مستقیم در مرورگر باز کنید:
 
 ```
