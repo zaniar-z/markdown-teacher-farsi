@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>آموزش جامع Markdown - Persian Markdown Teacher</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.11.3/p5.min.js"></script>
+<style>
+:root{
+  --primary:#bb86fc;--accent:#03dac6;
+  --bg:#ffffff;--text:#1a1a2e;--muted:#6b7280;
+  --card:#fafafa;--border:#e5e7eb;--code-bg:#f3f4f6;--code-text:#1f2937;
+  --shadow:0 1px 3px rgba(0,0,0,.04);
+  --hover-shadow:0 8px 24px rgba(187,134,252,.08);
+}
+[data-theme="dark"]{
+  --bg:#0d0e15;--text:#f0f0f5;--muted:#9ca3af;
+  --card:#16181d;--border:#2d2f36;--code-bg:#1e1e2e;--code-text:#cdd6f4;
+  --shadow:0 1px 3px rgba(0,0,0,.3);
+  --hover-shadow:0 8px 24px rgba(3,218,198,.12);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Vazirmatn',system-ui,sans-serif;
+  background:var(--bg);color:var(--text);
+  line-height:1.8;font-size:16px;min-height:100vh;
+  position:relative;overflow-x:hidden;
+}
+#p5-canvas{position:fixed;top:0;left:0;z-index:0;pointer-events:none}
+main{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:2rem 1.5rem 4rem}
+header{text-align:center;padding:3rem 1rem 2rem;border-bottom:1px solid var(--border);margin-bottom:2rem}
+h1{font-size:clamp(2rem,5vw,3rem);font-weight:800;background:linear-gradient(135deg,var(--primary),var(--accent));-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:.5rem}
+.subtitle{color:var(--muted);font-size:1.1rem;font-weight:400}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--primary),var(--accent));z-index:100;transform-origin:left;transform:scaleX(0);transition:transform .1s linear}
+section{margin-bottom:3rem;padding:1.5rem;background:var(--card);border:1px solid var(--border);border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.04);transition:transform .2s,box-shadow .2s}
+section:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(187,134,252,.08)}
+section h2{font-size:1.5rem;font-weight:700;color:var(--text);margin-bottom:1rem;padding-bottom:.75rem;border-bottom:2px solid var(--primary);display:flex;align-items:center;gap:.75rem}
+section h2::before{content:attr(data-num);width:32px;height:32px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;border-radius:8px;font-size:.85rem;font-weight:700;flex-shrink:0}
+section h3{font-size:1.15rem;font-weight:600;color:var(--text);margin:1.5rem 0 .75rem;display:flex;align-items:center;gap:.5rem}
+section h3::before{content:"";width:6px;height:6px;background:var(--accent);border-radius:50%}
+p{margin-bottom:1rem;color:var(--text)}
+code{font-family:'JetBrains Mono','Fira Code',monospace;background:var(--code-bg);color:var(--code-text);padding:.15rem .4rem;border-radius:4px;font-size:.9em;direction:ltr !important;unicode-bidi:isolate;display:inline-block;text-align:left !important}
+pre{background:var(--code-bg);color:var(--code-text);padding:2.5rem 1.25rem 1.25rem;border-radius:10px;overflow-x:auto;margin:1rem 0;position:relative;direction:ltr !important;text-align:left !important;unicode-bidi:isolate}
+pre code{background:transparent;padding:0;color:inherit;font-size:.9rem;line-height:1.7;direction:ltr !important;text-align:left !important;display:block;unicode-bidi:isolate}
+.copy-btn{position:absolute;top:.5rem;right:.75rem;left:auto;background:var(--card);color:var(--text);border:1px solid var(--border);padding:.35rem .6rem;border-radius:6px;font-size:.7rem;cursor:pointer;opacity:.8;transition:all .2s;z-index:5}
+pre::before{content:attr(data-lang);position:absolute;top:.5rem;left:.75rem;right:auto;font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;z-index:5}
+.copy-btn:hover{opacity:1}
+ul,ol{margin:1rem 0 1rem 1.5rem}
+li{margin:.5rem 0}
+li::marker{color:var(--primary)}
+table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.95rem}
+th,td{border:1px solid var(--border);padding:.75rem 1rem;text-align:right}
+th{background:var(--code-bg);font-weight:600;color:var(--text)}
+tr:nth-child(even) td{background:var(--code-bg)}
+blockquote{border-right:3px solid var(--primary);background:var(--card);padding:1rem 1.5rem;margin:1rem 0;border-radius:0 8px 8px 0;color:var(--muted);font-style:italic}
+.nav{display:flex;justify-content:center;gap:1rem;margin-top:3rem;padding-top:2rem;border-top:1px solid var(--border);flex-wrap:wrap}
+.nav a{display:inline-flex;align-items:center;gap:.5rem;padding:.7rem 1.25rem;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--text);text-decoration:none;font-weight:500;font-size:.9rem;transition:all .2s}
+.nav a:hover{border-color:var(--primary);color:var(--primary);transform:translateY(-1px);box-shadow:0 4px 12px rgba(187,134,252,.15)}
+.nav a.active{background:linear-gradient(135deg,var(--primary),var(--accent));border-color:transparent;color:#fff}
+
+/* Theme Toggle */
+.theme-btn{position:absolute;top:1.5rem;left:1.5rem;z-index:10;width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:var(--card);border:1px solid var(--border);border-radius:10px;cursor:pointer;color:var(--text);transition:all .2s}
+.theme-btn:hover{border-color:var(--primary);transform:scale(1.05);box-shadow:var(--hover-shadow)}
+.theme-btn .icon-sun{display:none}
+.theme-btn .icon-moon{display:block}
+[data-theme="dark"] .theme-btn .icon-sun{display:block}
+[data-theme="dark"] .theme-btn .icon-moon{display:none}
+header{position:relative}
+.cheatsheet{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem;margin:1.5rem 0}
+.cheat-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.25rem;transition:all .2s}
+.cheat-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 8px 24px rgba(3,218,198,.08)}
+.cheat-card h4{font-size:.95rem;font-weight:600;margin-bottom:.75rem;color:var(--primary);display:flex;align-items:center;gap:.5rem}
+.cheat-card pre{margin:.5rem 0 0;padding:2.25rem .75rem .75rem;font-size:.8rem}
+.kbd{display:inline-flex;align-items:center;justify-content:center;background:var(--code-bg);border:1px solid var(--border);border-radius:4px;padding:.15rem .5rem;font-family:monospace;font-size:.8rem;color:var(--text);margin:0 .15rem}
+.exercise{background:linear-gradient(135deg,rgba(187,134,252,.08),rgba(3,218,198,.08));border:1px solid rgba(187,134,252,.2);border-radius:10px;padding:1.5rem;margin:1.5rem 0}
+.exercise h4{color:var(--primary);font-weight:600;margin-bottom:.75rem;display:flex;align-items:center;gap:.5rem}
+.exercise code{background:rgba(187,134,252,.15);color:var(--primary)}
+@media (max-width:640px){
+  main{padding:1rem}
+  section{padding:1rem}
+  h1{font-size:1.8rem}
+  pre{padding:1rem}
+}
+@media (prefers-reduced-motion:reduce){
+  *, *::before, *::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+}
+
+/* Level Navigation Tabs */
+.level-nav{margin-bottom:2rem;padding:0 1rem}
+.level-tabs{display:flex;gap:.5rem;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.35rem;position:relative;overflow:hidden}
+.level-tab{flex:1;padding:.7rem 1rem;border:none;background:transparent;color:var(--muted);font-family:'Vazirmatn',system-ui,sans-serif;font-size:.95rem;font-weight:500;cursor:pointer;position:relative;z-index:2;transition:color .2s,border-radius .2s}
+.level-tab:hover{color:var(--text)}
+.level-tab.active{color:#fff}
+.level-indicator{position:absolute;top:.35rem;left:0;height:calc(100% - .7rem);background:linear-gradient(135deg,var(--primary),var(--accent));border-radius:8px;transition:transform .3s cubic-bezier(.4,0,.2,1),width .3s cubic-bezier(.4,0,.2,1);z-index:1;box-shadow:0 2px 8px rgba(187,134,252,.3)}
+
+/* Light mode: ensure tab text contrast */
+[data-theme="light"] .level-tab{color:#374151}
+[data-theme="light"] .level-tab:hover{color:#111827}
+[data-theme="light"] .level-tab.active{color:#fff}
+
+/* Dark mode: ensure tab text contrast */
+[data-theme="dark"] .level-tab{color:#9ca3af}
+[data-theme="dark"] .level-tab:hover{color:#f3f4f6}
+[data-theme="dark"] .level-tab.active{color:#0d0e15}
+
+/* Section filter animation */
+section{transition:opacity .2s,transform .2s}
+section.hidden{opacity:0;transform:translateY(10px);pointer-events:none;display:none}
+section.visible{opacity:1;transform:translateY(0);position:relative;display:block}
+
+/* Jump-to-next-section CTA */
+.jump-cta{display:none;justify-content:center;margin:-1.5rem 0 3rem}
+.jump-cta.visible{display:flex}
+.jump-pair{display:flex;gap:.75rem;flex-wrap:wrap;justify-content:center}
+.jump-btn{display:inline-flex;align-items:center;gap:.6rem;padding:.9rem 1.6rem;border:none;border-radius:10px;background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;font-family:'Vazirmatn',system-ui,sans-serif;font-size:.95rem;font-weight:600;cursor:pointer;box-shadow:0 4px 14px rgba(187,134,252,.25);transition:transform .2s,box-shadow .2s}
+.jump-btn:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(187,134,252,.35)}
+.jump-btn .arrow{transition:transform .2s}
+.jump-btn:hover .arrow{transform:translateX(-3px)}
+</style>
+</head>
+<body>
+<div id="p5-canvas"></div>
+<div class="progress-bar" id="progress"></div>
+<main>
+<header>
+  <h1>آموزش جامع Markdown</h1>
+  <p class="subtitle">از مبتدی تا حرفه‌ای — ساختاری هوشمند برای یادگیری عمیق</p>
+  <button id="theme-toggle" class="theme-btn" aria-label="تغییر تم" title="تغییر تم (Ctrl+Shift+L)">
+    <svg class="icon-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+    <svg class="icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+  </button>
+</header>
+
+<!-- Level Navigation -->
+<nav class="level-nav" aria-label="سطوح آموزشی">
+  <div class="level-tabs">
+    <button class="level-tab active" data-level="all">همه</button>
+    <button class="level-tab" data-level="basic">مقدماتی</button>
+    <button class="level-tab" data-level="advanced">پیشرفته</button>
+    <button class="level-tab" data-level="obsidian">آبسیدین</button>
+    <div class="level-indicator"></div>
+  </div>
+</nav>
+
+<section data-num="1" data-level="basic">
+<h2>مقدمه و فلسفه</h2>
+<p><strong>Markdown</strong> یک زبان نشانه‌گذاری سبک (lightweight markup language) است که با هدف خواناییِ متنِ ساده طراحی شده. ایدهٔ اصلی: <em>متن باید حتی در حالت خام هم قابل خواندن باشد</em>.</p>
+<h3>چرا Markdown؟</h3>
+<ul>
+<li>سادگی: بدون تگ‌های پیچیده HTML</li>
+<li>قابل انتقال: فایل‌های <code>.md</code> در همه جا باز می‌شوند</li>
+<li>کنترل نسخه: diff خوانا در Git</li>
+<li>استفاده گسترده: GitHub، GitLab، Notion، Obsidian، Discord، Reddit، Stack Overflow،...</li>
+</ul>
+<h3>انواع (Flavors)</h3>
+<table>
+<thead><tr><th>نسخه</th><th>ویژگی کلیدی</th><th>استفاده</th></tr></thead>
+<tbody>
+<tr><td>CommonMark</td><td>استاندارد واحد، مشخصات دقیق</td><td>پایه همه flavourها</td></tr>
+<tr><td>GitHub Flavored (GFM)</td><td>جدول، task list، strikethrough، autolink</td><td>GitHub، GitLab، VS Code</td></tr>
+<tr><td>MultiMarkdown</td><td>پانویس (Footnote)، citation، metadata، math</td><td>نوشتار علمی، کتاب</td></tr>
+<tr><td>Pandoc</td><td>قدرت‌مندترین تبدیل‌دهنده</td><td>تبدیل به PDF، DOCX، HTML، LaTeX</td></tr>
+</tbody>
+</table>
+<div class="exercise">
+<h4>💡 تمرین</h4>
+<p>یک فایل <code>test.md</code> بسازید و در VS Code با پیش‌نمایش (Ctrl+Shift+V) باز کنید. متن زیر را کپی کنید:</p>
+<pre data-lang="markdown"><code># سلام Markdown
+این **پراکنده** و *کج* است.
+- مورد اول
+- مورد دوم</code></pre>
+</div>
+</section>
+
+<section data-num="2" data-level="basic">
+<h2>سازماندهی سند: سربرگ‌ها و بدنه</h2>
+<h3>سطوح سربرگ (Heading Levels)</h3>
+<p>شش سطح از <code>h1</code> تا <code>h6</code> با نماد <code>#</code>:</p>
+<pre data-lang="markdown"><code># سطح 1 - عنوان اصلی سند
+## سطح 2 - فصل
+### سطح 3 - بخش
+#### سطح 4 - زیربخش
+##### سطح 5 - جزئیات
+###### سطح 6 - ریزجزئیات</code></pre>
+<h3>قوانین مهم</h3>
+<ul>
+<li>فاصله بعد از <code>#</code> الزامی است (<code>#Title</code> غلط، <code># Title</code> درست)</li>
+<li>فقط یک <code>h1</code> در هر سند (بهترین تمرین SEO و دسترس‌پذیری)</li>
+<li>پریدن از سطح ممنوع است (از h2 به h4 نروید)</li>
+</ul>
+<h3>استایل جایگزین (Setext) — فقط h1 و h2</h3>
+<pre data-lang="markdown"><code>عنوان سطح 1
+===========
+
+عنوان سطح 2
+-----------</code></pre>
+<p><kbd>نکته</kbd>: Setext در GFM منسوخ محسوب می‌شود؛ از ATX (<code>#</code>) استفاده کنید.</p>
+</section>
+
+<section data-num="3" data-level="basic">
+<h2>متن و تأکید</h2>
+<div class="cheatsheet">
+<div class="cheat-card"><h4>📝 پراکنده (Bold)</h4><pre data-lang="markdown"><code>**متن پراکنده**
+__متن پراکنده__</code></pre></div>
+<div class="cheat-card"><h4>📝 کج (Italic)</h4><pre data-lang="markdown"><code>*متن کج*
+_متن کج_</code></pre></div>
+<div class="cheat-card"><h4>📝 پراکنده + کج</h4><pre data-lang="markdown"><code>***هر دو***
+___هر دو___</code></pre></div>
+<div class="cheat-card"><h4>📝 خط‌ خورده</h4><pre data-lang="markdown"><code>~~حذف شده~~</code></pre></div>
+<div class="cheat-card"><h4>📝 زیرخط</h4><pre data-lang="markdown"><code>&lt;u&gt;زیرخط دار&lt;/u&gt;</code></pre></div>
+<div class="cheat-card"><h4>📝 هایلایت</h4><pre data-lang="markdown"><code>==هایلایت== (GFM)</code></pre></div>
+</div>
+<h3>قاعده‌ی تو در تو (Nesting)</h3>
+<p>ترتیب بسته کردن مهم است: <code>**_درست_**</code> ✅ | <code>*_غلط**</code> ❌</p>
+<pre data-lang="markdown"><code>**پراکنده با *کج* در میان**
+*کج با **پراکنده** در میان*</code></pre>
+<h3>کاراکترهای خاص (Escaping)</h3>
+<p>برای نمایش خودِ کاراکترهای نشانه‌گذاری (به‌جای اعمال شدن‌شان)، قبلشان یک <code>\</code> بگذار:</p>
+<ul>
+<li><code>\*متن\*</code> → نمایش می‌ده <code>*متن*</code> (نه متنِ کج)</li>
+<li><code>\#</code> → به‌جای سربرگ، خودِ <code>#</code></li>
+<li><code>\\</code> → یک بک‌اسلش</li>
+</ul>
+<pre data-lang="markdown"><code>\*این پراکنده نیست\*
+\# این سربرگ نیست
+\\ بک‌اسلش نوشتن</code></pre>
+</section>
+
+<section data-num="4" data-level="basic">
+<h2>لیست‌ها: مرتب، نامرتب، و تو در تو</h2>
+<h3>لیست نامرتب (Unordered)</h3>
+<p>استفاده از <code>-</code>، <code>*</code>، یا <code>+</code> (ترجیح: <code>-</code> برای ثبات):</p>
+<pre data-lang="markdown"><code>- مورد اول
+- مورد دوم
+  - زیرمورد (تورفتگی 2 فاصله)
+    - زیرِ زیرمورد (تورفتگی 4 فاصله)
+- مورد سوم</code></pre>
+<h3>لیست مرتب (Ordered)</h3>
+<p>شماره‌گذاری خودکار؛ عدد اول مهم است، بقیه نادیده گرفته می‌شوند:</p>
+<pre data-lang="markdown"><code>1. قدم اول
+1. قدم دوم (رندر می‌شود 2.)
+1. قدم سوم
+   1. زیرقدم
+   1. زیرقدم دیگر</code></pre>
+<h3>لیست وظایف (Task Lists) — GFM</h3>
+<pre data-lang="markdown"><code>- [x] انجام شده
+- [ ] در انتظار
+- [ ] ~در حال انجام~ (ترکیب با strikethrough)</code></pre>
+<div class="exercise">
+<h4>💡 تمرین</h4>
+<p>یک لیست خرید با زیرمجموعه و task list بسازید. در GitHub تیک‌دارها تعاملی هستند.</p>
+</div>
+</section>
+
+<section data-num="5" data-level="basic" id="sec-basic-start">
+<h2>لینک، تصویر، و ارجاع</h2>
+<h3>لینک‌ها</h3>
+<p>فرم: <code>[متن دیده‌شده](نشانی)</code> — عنوان داخل <code>""</code> اختیاری است (وقتی ماوس روی لینک برود نمایش داده می‌شود):</p>
+<pre data-lang="markdown"><code>[متن دیده‌شده](https://example.com)
+[با تیپ‌هالت](https://example.com "توضیح")
+[متن ساده](https://example.com "تیپ‌هالت اختیاری")
+[متن پررنگ و کج **مهم** را هم می‌توان گذاشت](https://example.com)</code></pre>
+<p><code>[متن](آدرس)</code> → یک لینک قابل کلیک.</p>
+<h3>لینک ارجاعی (Reference)</h3>
+<p>دو جا تعریف می‌کنی: متن از <code>[متن][کلید]</code> استفاده می‌کند، و کلید در پایین سند تعریف می‌شود — برای وقتی که یک آدرس را بارها استفاده می‌کنی:</p>
+<pre data-lang="markdown"><code>[متن لینک][ref]
+[ref]: https://example.com "عنوان"</code></pre>
+<p>خروجی یکسان است؛ فقط آدرس را یک‌بار در انتهای فایل می‌نویسی.</p>
+<h3>تصاویر</h3>
+<p>مثل لینک، با <code>!</code> اول. داخل کروشه «متن جایگزین» (توصیف تصویر برای نابینایان و اگر تصویر لود نشود) می‌آید:</p>
+<pre data-lang="markdown"><code>![متن جایگزین](https://example.com/img.png "تیپ‌هالت")
+![تصویر لوکال](./assets/logo.png)</code></pre>
+<h3>تصویرِ لینک‌دار</h3>
+<p>تصویر را توی کروشه لینک بگذار — کلیک روی تصویر لینک را باز می‌کند:</p>
+<pre data-lang="markdown"><code>[![تصویر](img.png)](https://example.com)</code></pre>
+<h3>لینک‌های خودکار (Autolinks)</h3>
+<p>آدرس و ایمیل را در <code>&lt;&gt;</code> بگذار؛ بدون نیاز به لینک‌سازی — خودش رندر می‌شود:</p>
+<pre data-lang="markdown"><code>&lt;https://example.com&gt;
+&lt;email@example.com&gt;</code></pre>
+<h3>پانویس (Footnote) — Pandoc/MultiMarkdown</h3>
+<p>در متن <code>[^شماره]</code> بگذار و تعریفش را هر جای سند با <code>[^شماره]: متن</code> بنویس — پایین صفحه جمع می‌شوند:</p>
+<pre data-lang="markdown"><code>اینجا پانویس می‌خواهم.[^1]
+
+[^1]: تعریف پانویس در اینجا — هر جایی از سند.</code></pre>
+</section>
+
+<section data-num="6" data-level="basic">
+<h2>کد: خطی و بلوکی</h2>
+<h3>کد خطی (Inline Code)</h3>
+<p>برای نام متغیر، دستور، کلید: <code>`code`</code></p>
+<pre data-lang="markdown"><code>از دستور `git commit` استفاده کنید.
+بک‌تیک در کد: `` `backtick` ``</code></pre>
+<h3>بلوک کد (Fenced Code Blocks)</h3>
+<p>سه بک‌تیک یا تیلدا با مشخص کردن زبان:</p>
+<pre data-lang="markdown"><code>```python
+def hello(name: str) -> str:
+    return f"سلام، {name}!"
+```</code></pre>
+<h3>هایلایت خط و دیف (خطای/افزوده) — GFM</h3>
+<pre data-lang="markdown"><code>```diff
+- const old = 'حذف شده';
++ const new = 'افزوده شده';
+! const changed = 'تغییر یافته';
+```</code></pre>
+<h3>تنظیمات پیشرفته</h3>
+<p>این‌ها فرمت استاندارد نیستند — هر رندرر (Pandoc، GitLab، Hugo) دستور خودش را دارد. فقط اگر در ابزارت کار نکرد، تعجب نکن:</p>
+<pre data-lang="markdown"><code>```python {1,3-5}        # نمایش خط‌های 1، 3 تا 5 (Pandoc)
+```python hl_lines="2 4"  # هایلایت خط‌های 2 و 4
+```python:script.py       # لینک به فایل از یک بلوک (بعضی ابزارها)</code></pre>
+<p>برای GFM/GitHub این‌ها کار نمی‌کنند — آن‌جا فقط <code>```lang</code> ساده پشتیبانی می‌شود.</p>
+</section>
+
+<section data-num="7" data-level="basic">
+<h2>جدول‌ها (Tables) — GFM</h2>
+<h3>ساختار پایه</h3>
+<pre data-lang="markdown"><code>| نام | سن | شهر |
+|-----|----|-------|
+| علی | 25 | تهران |
+| سارا | 30 | اصفهان |</code></pre>
+<p>رندر:</p>
+<table>
+<thead><tr><th>نام</th><th>سن</th><th>شهر</th></tr></thead>
+<tbody>
+<tr><td>علی</td><td>25</td><td>تهران</td></tr>
+<tr><td>سارا</td><td>30</td><td>اصفهان</td></tr>
+</tbody>
+</table>
+<h3>ترازبندی (Alignment)</h3>
+<pre data-lang="markdown"><code>| چپ | وسط | راست |
+|:---|:---:|---:|
+| ل | م | ر |</code></pre>
+<h3>نکات مهم</h3>
+<ul>
+<li>حداقل 3 خط جدا کننده (<code>---</code>) لازم است</li>
+<li>ستون‌ها می‌توانند خالی بمانند</li>
+<li>HTML در سلول‌ها رندر می‌شود (با احتیاط)</li>
+<li>جدول‌های عریض: در موبایل اسکرول افقی دارد</li>
+</ul>
+</section>
+
+<div class="jump-cta" data-cta-for="basic">
+  <div class="jump-pair">
+    <button class="jump-btn" data-jump-to="advanced" data-jump-target="sec-advanced-start">
+      <span class="arrow">←</span>
+      <span>بخش بعدی: نقل قول و شکستن خط</span>
+    </button>
+  </div>
+</div>
+
+<section data-num="8" data-level="advanced" id="sec-advanced-start">
+<h2>نقل قول، خط افقی، و شکستن خط</h2>
+<h3>نقل قول (Blockquote)</h3>
+<pre data-lang="markdown"><code>> این یک نقل قول است.
+> می‌تواند چند خطی باشد.
+>
+> > نقل قول تو در تو
+> > خط دوم تو در تو</code></pre>
+<blockquote>
+این یک نقل قول است.<br>
+می‌تواند چند خطی باشد.
+<blockquote>نقل قول تو در تو<br>خط دوم تو در تو</blockquote>
+</blockquote>
+<h3>خط افقی (Horizontal Rule)</h3>
+<p>هر سه روش برابرند:</p>
+<pre data-lang="markdown"><code>---
+***
+___</code></pre>
+<hr>
+<h3>شکستن خط (Line Break)</h3>
+<p>در Markdown <kbd>Enter</kbd> به‌تنهایی خط را عوض نمی‌کند (دو خط در خروجی به هم می‌چسبند). دو راه برای خط جدید:</p>
+<ul>
+<li><strong>خط جدید سخت</strong>: دو فاصله در پایان خط، بعد <kbd>Enter</kbd></li>
+<li><strong>پاراگراف جدید</strong>: یک خط خالی بین دو متن — فاصله هم بیشتر می‌شود</li>
+</ul>
+<pre data-lang="markdown"><code>خط اول␣␣
+خط دوم (نتیجه: خط جدید)
+
+خط سوم (نتیجه: پاراگراف جدید، فاصله بیشتر)</code></pre>
+</section>
+
+<section data-num="9" data-level="advanced">
+<h2>HTML خام و ویژگی‌های پیشرفته</h2>
+<h3>HTML در Markdown</h3>
+<p>Markdown زیرمجموعه HTML است — تگ‌های بلوکی (<code>&lt;div&gt;</code>، <code>&lt;section&gt;</code>) کار می‌کنند، تگ‌های خطی هم.</p>
+<pre data-lang="markdown"><code>&lt;details&gt;
+&lt;summary&gt;باز کردن جزئیات&lt;/summary&gt;
+محتوای پنهان اینجاست.
+&lt;/details&gt;
+
+&lt;kbd&gt;Ctrl&lt;/kbd&gt; + &lt;kbd&gt;S&lt;/kbd&gt; = ذخیره</code></pre>
+<details>
+<summary>باز کردن جزئیات</summary>
+محتوای پنهان اینجاست.
+</details>
+<p><kbd>Ctrl</kbd> + <kbd>S</kbd> = ذخیره</p>
+<h3>تعریف شناسه و کلاس (Pandoc/کستوم)</h3>
+<pre data-lang="markdown"><code># عنوان {#custom-id .class1 .class2}
+
+پاراگراف {.highlight}</code></pre>
+<h3>نمادهای ریاضی (Math) — Pandoc/GFM (بعضی)</h3>
+<pre data-lang="markdown"><code>نماد خطی: $E = mc^2$
+
+نماد بلوکی:
+$$
+\sum_{i=1}^{n} i = \frac{n(n+1)}{2}
+$$</code></pre>
+</section>
+
+<section data-num="10" data-level="advanced">
+<h2>متادیتاها (Front Matter) و ابزارها</h2>
+<h3>YAML Front Matter</h3>
+<p>برای متادیتای سند (استاتیک‌سایت ژنراتورها: Hugo، Jekyll، Astro، Next.js):</p>
+<pre data-lang="markdown"><code>---
+title: "آموزش Markdown"
+date: 2024-01-15
+tags: [markdown, tutorial, persian]
+author: "Zaniar Zaheri"
+draft: false
+---</code></pre>
+<h3>ابزارهای پیشنهادی</h3>
+<table>
+<thead><tr><th>دسته</th><th>ابزار</th><th>ویژگی</th></tr></thead>
+<tbody>
+<tr><td>ویرایشگر</td><td>VS Code + Markdown All in One</td><td>پیش‌نمایش، میانبر، TOC</td></tr>
+<tr><td>ویرایشگر</td><td>Obsidian</td><td>گراف، ویکی‌لینک، پلاگین</td></tr>
+<tr><td>لینتر</td><td>markdownlint (CLI/VS Code)</td><td>استانداردسازی، خطایابی</td></tr>
+<tr><td>فرمت‌دهنده</td><td>Prettier + prettier-plugin-markdown</td><td>فرمت یکسان تیمی</td></tr>
+<tr><td>تبدیل‌دهنده</td><td>Pandoc</td><td>PDF، DOCX، HTML، LaTeX، EPUB</td></tr>
+<tr><td>استاتیک‌سایت</td><td>Astro، Next.js، VitePress</td><td>MDX، جزیره، روتینگ</td></tr>
+</tbody>
+</table>
+<h3>markdownlint — قوانین مهم</h3>
+<p>markdownlint قوانین را کد به کد (مثل <code>MD013</code>) شماره‌گذاری کرده؛ با آنها «چه چیزی اشتباه است و چرا» را می‌فهمی:</p>
+<ul>
+<li><code>MD013</code> — طول خط: هر خط بیشتر از ۸۰ نویسه اخطار می‌گیرد. برای فارسی عملاً غیرفعالش کنید (خطوط فارسی بلند می‌شوند).</li>
+<li><code>MD024</code> — سربرگ تکراری: دو <code>##</code> با عنوان یکسان در یک سند، ممنوع (گیج‌کننده است).</li>
+<li><code>MD033</code> — HTML خام: هشدار درباره تگ‌های HTML در متن؛ خاموشش کنید اگر عمداً HTML می‌نویسید.</li>
+<li><code>MD041</code> — اولین سربرگ h1: سند باید با <code>#</code> شروع شود، نه مستقیم <code>##</code>.</li>
+</ul>
+</section>
+
+<section data-num="11" data-level="advanced">
+<h2>الگوهای عملي و بهترین تمرین‌ها</h2>
+<h3>ساختار README استاندارد</h3>
+<pre data-lang="markdown"><code># نام پروژه
+توضیح یک خطی.
+
+## نشان‌ها (Shields)
+![License](https://img.shields.io/github/license/user/repo)
+![Version](https://img.shields.io/github/v/release/user/repo)
+
+## ویژگی‌ها
+- ✨ ویژگی ۱
+- 🚀 ویژگی ۲
+
+## نصب
+\`\`\`bash
+npm install package-name
+\`\`\`
+
+## استفاده
+\`\`\`js
+import pkg from 'package-name';
+pkg.doSomething();
+\`\`\`
+
+## مشارکت
+مشاهده &lt;a href="CONTRIBUTING.md"&gt;راهنما&lt;/a&gt;.
+
+## لایسنس
+MIT © [نویسنده](https://github.com/user)</code></pre>
+<h3>چک‌لیست کیفیت سند</h3>
+<ul>
+<li>[ ] یک h1 منحصر به فرد</li>
+<li>[ ] سلسله‌مرتب سربرگ‌ها (بدون پرش)</li>
+<li>[ ] لینک‌ها معتبر و باز هستند</li>
+<li>[ ] کدها با زبان مشخص شده</li>
+<li>[ ] جداول در موبایل اسکرول ندارند</li>
+<li>[ ] تصاویر alt text دارند</li>
+<li>[ ] markdownlint clean</li>
+</ul>
+</section>
+
+<section data-num="12" data-level="advanced">
+<h2>مرجع سریع (Cheatsheet کامل)</h2>
+<div class="cheatsheet">
+<div class="cheat-card"><h4>📋 سربرگ</h4><pre data-lang="markdown"><code># H1
+## H2
+### H3</code></pre></div>
+<div class="cheat-card"><h4>📋 تأکید</h4><pre data-lang="markdown"><code>\\*\\*bold\\*\\* \\*italic\\* \\*\\*\\*both\\*\\*\\*
+~~strike~~ ==highlight==</code></pre></div>
+<div class="cheat-card"><h4>📋 لیست</h4><pre data-lang="markdown"><code>- item
+1. ordered
+- [x] task</code></pre></div>
+<div class="cheat-card"><h4>📋 لینک/تصویر</h4><pre data-lang="markdown"><code>[text](url)
+![alt](img.png)</code></pre></div>
+<div class="cheat-card"><h4>📋 کد</h4><pre data-lang="markdown"><code>`inline`
+```lang
+block
+```</code></pre></div>
+<div class="cheat-card"><h4>📋 جدول</h4><pre data-lang="markdown"><code>|a|b|
+|:---:|:---:|
+|1|2|</code></pre></div>
+<div class="cheat-card"><h4>📋 نقل قول</h4><pre data-lang="markdown"><code>> quote
+>> nested</code></pre></div>
+<div class="cheat-card"><h4>📋 خط</h4><pre data-lang="markdown"><code>---
+***
+___</code></pre></div>
+<div class="cheat-card"><h4>📋 HTML</h4><pre data-lang="markdown"><code>&lt;details&gt;&lt;summary&gt;S&lt;/summary&gt;C&lt;/details&gt;
+&lt;kbd&gt;Ctrl&lt;/kbd&gt;</code></pre></div>
+<div class="cheat-card"><h4>📋 Escape</h4><pre data-lang="markdown"><code>\\\* \\# \\\[ \\\` \\\\</code></pre></div>
+<div class="cheat-card"><h4>📋 Front Matter</h4><pre data-lang="markdown"><code>---
+key: value
+---</code></pre></div>
+<div class="cheat-card"><h4>📋 Math</h4><pre data-lang="markdown"><code>$inline$
+$$block$$</code></pre></div>
+</div>
+</section>
+
+<div class="jump-cta" data-cta-for="advanced">
+  <div class="jump-pair">
+    <button class="jump-btn" data-jump-back="basic" data-jump-target="sec-basic-start">
+      <span class="arrow">→</span>
+      <span>بخش قبلی: لینک و تصویر</span>
+    </button>
+    <button class="jump-btn" data-jump-to="obsidian" data-jump-target="sec-obsidian-start">
+      <span class="arrow">←</span>
+      <span>بخش بعدی: معرفی Obsidian</span>
+    </button>
+  </div>
+</div>
+
+<section data-num="13" data-level="obsidian" id="sec-obsidian-start">
+<h2>معرفی Obsidian</h2>
+<p><strong>Obsidian</strong> یک برنامهٔ دسکتاپ (ویندوز، مک، لینوکس) برای مدیریت دانش شخصی (PKM) است که یادداشت‌ها را به‌صورت فایل‌های <strong>Markdown</strong> ساده روی سیستم خودت ذخیره می‌کند؛ یعنی هیچ سرور ابری واسطی در کار نیست و فایل‌ها همیشه در اختیار خودت هستند.</p>
+<h3>مفهوم Vault</h3>
+<p>هر پوشه‌ای که به Obsidian معرفی کنی یک <strong>Vault</strong> (خزانه) می‌شود؛ داخل آن هر فایل <code>.md</code> یک یادداشت است. چون همه‌چیز Markdown خام است، همان مهارتی که در بخش‌های قبل یاد گرفتی (سربرگ، لیست، کد، جدول) دقیقاً همین‌جا کاربرد دارد.</p>
+<h3>لینک دوطرفه (Wikilinks)</h3>
+<p>ویژگی اصلی Obsidian، لینک‌دهی بین یادداشت‌هاست:</p>
+<pre data-lang="markdown"><code>این ایده به [[یادداشت دیگر]] مرتبط است.
+تصویر: ![[diagram.png]]</code></pre>
+<p>وقتی یادداشت A به B لینک می‌شود، در B به‌صورت خودکار یک <strong>Backlink</strong> ثبت می‌شود و می‌توانی رابطهٔ بین ایده‌ها را در نمای <strong>Graph View</strong> به‌صورت شبکه‌ای از گره‌ها ببینی.</p>
+<h3>افزونه‌ها (Plugins)</h3>
+<ul>
+<li><strong>Core plugins</strong>: امکانات رسمی داخل خود برنامه (Graph view، Daily notes، Templates، ...)</li>
+<li><strong>Community plugins</strong>: هزاران افزونهٔ متن‌باز از جامعهٔ کاربران، برای همه‌چیز از تقویم گرفته تا اتوماسیون</li>
+</ul>
+</section>
+
+<section data-num="14" data-level="obsidian">
+<h2>نصب و شروع کار (ویندوز)</h2>
+<h3>مراحل نصب</h3>
+<ul>
+<li>از سایت رسمی <code>obsidian.md</code> نسخهٔ ویندوز را دانلود کن (رایگان برای استفادهٔ شخصی)</li>
+<li>فایل نصبی را اجرا کن؛ نیازی به حساب کاربری اجباری نیست</li>
+<li>در اولین اجرا یک Vault جدید بساز یا یک پوشهٔ موجود را به‌عنوان Vault باز کن</li>
+</ul>
+<h3>محیط کار</h3>
+<ul>
+<li><strong>ستون وسط</strong>: ویرایشگر Markdown (حالت Live Preview یا Source)</li>
+<li><strong>سایدبار چپ/راست</strong>: درخت فایل‌ها، جست‌وجو، Graph view، Backlinks</li>
+<li><strong>Command Palette</strong> (<kbd>Ctrl</kbd>+<kbd>P</kbd>): دسترسی سریع به هر دستوری بدون ماوس</li>
+<li><strong>Quick switcher</strong> (<kbd>Ctrl</kbd>+<kbd>O</kbd>): پرش سریع بین یادداشت‌ها</li>
+</ul>
+<h3>سازمان‌دهی</h3>
+<p>می‌توانی از پوشه‌بندی سنتی استفاده کنی، یا فقط با <strong>لینک و تگ</strong> (<code>#tag</code>) ساختار بسازی — بسیاری از کاربران Obsidian ساختار درختی پوشه را کنار می‌گذارند و به شبکهٔ لینک‌ها تکیه می‌کنند.</p>
+</section>
+
+<section data-num="15" data-level="obsidian">
+<h2>اتصال Obsidian به ایجنت‌های هوش مصنوعی</h2>
+<p>چون Vault چیزی جز مجموعه‌ای از فایل‌های متنی روی دیسک نیست، وصل‌کردنش به ابزارهای هوش مصنوعی و ایجنت‌ها خیلی طبیعی است. چند مسیر رایج در جامعهٔ Obsidian:</p>
+<h3>۱. افزونهٔ Local REST API</h3>
+<p>این افزونهٔ محبوب یک سرور محلی روی سیستم خودت بالا می‌آورد که به یادداشت‌های Vault دسترسی HTTP می‌دهد (خواندن، نوشتن، جست‌وجو). ایجنت‌ها یا اسکریپت‌ها می‌توانند از طریق این API با یادداشت‌ها کار کنند، بدون این‌که فایل‌ها را مستقیماً دستکاری کنند.</p>
+<h3>۲. سرورهای MCP برای Obsidian</h3>
+<p>در جامعهٔ متن‌باز، چند پروژهٔ <strong>MCP server</strong> (پروتکل اتصال ایجنت به ابزار) برای Obsidian ساخته شده که روی همان افزونهٔ Local REST API یا مستقیماً روی فایل‌های Vault کار می‌کنند. با وصل‌کردن چنین سروری به یک ایجنت (مثلاً Claude)، ایجنت می‌تواند یادداشت‌ها را بخواند، جست‌وجو کند یا یادداشت جدید بسازد.</p>
+<h3>۳. افزونه‌های هوش مصنوعی داخل خود Obsidian</h3>
+<p>افزونه‌هایی مثل ابزارهای جست‌وجوی معنایی (embedding-based search) یا دستیارهای نوشتاری، مستقیم داخل Obsidian نصب می‌شوند و به Vault به‌عنوان یک پایگاه دانش برای پاسخ‌گویی و تولید محتوا نگاه می‌کنند.</p>
+<h3>نکات امنیتی</h3>
+<ul>
+<li>پورت سرور محلی را هرگز مستقیماً روی اینترنت باز نکن؛ فقط برای دسترسی محلی (localhost) استفاده‌اش کن</li>
+<li>کلید API را مثل رمز عبور نگه‌دار و در فایل‌های عمومی/گیت‌هاب قرار نده</li>
+<li>قبل از دادن دسترسی نوشتن به یک ایجنت، از Vault یک نسخهٔ پشتیبان (یا Git) داشته باش</li>
+</ul>
+</section>
+
+<nav class="nav" aria-label="نویسنده و لینک‌ها">
+<a href="https://t.me/persian_hermes" target="_blank" rel="noopener">📢 @persian_hermes</a>
+<a href="https://github.com/zaniar-z" target="_blank" rel="noopener">💻 @zaniar-z</a>
+<span style="color:var(--muted);font-weight:500">نویسنده: Zaniar Zaheri</span>
+</nav>
+</main>
+
+<script>
+// ===== p5.js Background (decorative only — must never block the rest of the page) =====
+try {
+if (typeof p5 === 'undefined') throw new Error('p5 failed to load');
+new p5((p) => {
+  const particles = [];
+  const count = 35;
+  let w, h;
+
+  function getThemeColors() {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    return {
+      hues: isDark ? [267, 174] : [267, 174], // primary/accent hue in HSB
+      alphas: isDark ? [0.12, 0.35] : [0.08, 0.25],
+      bgAlpha: isDark ? 0.15 : 0.08
+    };
+  }
+
+  let themeColors = getThemeColors();
+
+  p.setup = () => {
+    const canvas = p.createCanvas(p.windowWidth, p.windowHeight);
+    canvas.parent('p5-canvas');
+    p.pixelDensity(1);
+    w = p.width; h = p.height;
+    for (let i = 0; i < count; i++) particles.push(new Particle());
+  };
+
+  p.windowResized = () => {
+    p.resizeCanvas(p.windowWidth, p.windowHeight);
+    w = p.width; h = p.height;
+  };
+
+  p.draw = () => {
+    // Update theme colors each frame for smooth transition
+    themeColors = getThemeColors();
+    p.clear();
+    for (const pt of particles) {
+      pt.update();
+      pt.draw();
+    }
+  };
+
+  class Particle {
+    constructor() {
+      this.reset();
+      this.y = p.random(h);
+      this.x = p.random(w);
+      this.vx = p.random(-0.3, 0.3);
+      this.vy = p.random(-0.2, 0.2);
+      this.size = p.random(1.5, 4);
+      this.baseAlpha = p.random(themeColors.alphas[0], themeColors.alphas[1]);
+      this.alpha = this.baseAlpha;
+      this.hue = p.random(themeColors.hues);
+    }
+    reset() {
+      this.x = p.random(w);
+      this.y = p.random(h);
+      themeColors = getThemeColors();
+      this.baseAlpha = p.random(themeColors.alphas[0], themeColors.alphas[1]);
+      this.hue = p.random(themeColors.hues);
+    }
+    update() {
+      this.x += this.vx;
+      this.y += this.vy;
+      const n = p.noise(this.x * 0.001, this.y * 0.001, p.millis() * 0.0001);
+      this.vx += (n - 0.5) * 0.02;
+      this.vy += (p.noise(this.y * 0.001, p.millis() * 0.0001) - 0.5) * 0.02;
+      this.vx = p.constrain(this.vx, -0.5, 0.5);
+      this.vy = p.constrain(this.vy, -0.5, 0.5);
+      if (this.x < -10) this.x = w + 10;
+      if (this.x > w + 10) this.x = -10;
+      if (this.y < -10) this.y = h + 10;
+      if (this.y > h + 10) this.y = -10;
+    }
+    draw() {
+      p.noStroke();
+      p.colorMode(p.HSB, 360, 100, 100, 1);
+      p.fill(this.hue, 70, 85, this.alpha);
+      p.circle(this.x, this.y, this.size);
+      if (this.size > 3) {
+        p.fill(this.hue, 50, 90, this.alpha * 0.3);
+        p.circle(this.x, this.y, this.size * 2.5);
+      }
+    }
+  }
+});
+} catch (err) {
+  // Background animation couldn't load (e.g. slow/blocked network) — ignore and continue.
+  console.warn('p5 background disabled:', err);
+}
+
+// ===== Theme Toggle =====
+(function initTheme() {
+  const html = document.documentElement;
+  const toggle = document.getElementById('theme-toggle');
+  const saved = localStorage.getItem('theme');
+  const prefersDark = window.matchMedia('(prefers-color-scheme:dark)').matches;
+  const initial = saved || (prefersDark ? 'dark' : 'light');
+  html.setAttribute('data-theme', initial);
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+  }
+
+  toggle.addEventListener('click', () => {
+    const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    setTheme(next);
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'l') {
+      e.preventDefault();
+      toggle.click();
+    }
+  });
+
+  window.matchMedia('(prefers-color-scheme:dark)').addEventListener('change', (e) => {
+    if (!localStorage.getItem('theme')) {
+      setTheme(e.matches ? 'dark' : 'light');
+    }
+  });
+})();
+
+// ===== Scroll Progress Bar =====
+const progress = document.getElementById('progress');
+window.addEventListener('scroll', () => {
+  const scrollTop = window.scrollY;
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  progress.style.transform = `scaleX(${docHeight > 0 ? scrollTop / docHeight : 0})`;
+}, { passive: true });
+
+// ===== Copy Code Buttons =====
+document.querySelectorAll('pre').forEach(pre => {
+  const btn = document.createElement('button');
+  btn.className = 'copy-btn';
+  btn.textContent = 'کپی';
+  btn.addEventListener('click', async () => {
+    const code = pre.querySelector('code').textContent;
+    await navigator.clipboard.writeText(code);
+    btn.textContent = 'کپی شد!';
+    setTimeout(() => btn.textContent = 'کپی', 1500);
+  });
+  pre.appendChild(btn);
+});
+
+// ===== Confirm Before Refresh/Leave =====
+let formDirty = false;
+// Mark dirty if user types in any input/textarea (future-proof)
+document.addEventListener('input', e => {
+  if (e.target.matches('textarea, input, [contenteditable]')) formDirty = true;
+});
+
+window.addEventListener('beforeunload', (e) => {
+  if (formDirty) {
+    e.preventDefault();
+    e.returnValue = '';
+    return '';
+  }
+});
+
+// Reset dirty flag on successful navigation (links)
+document.querySelectorAll('a[href]').forEach(a => {
+  a.addEventListener('click', () => { formDirty = false; });
+});
+
+// ===== Smooth scroll for nav =====
+document.querySelectorAll('.nav a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+
+// ===== Level Navigation Filter =====
+(function initLevelFilter() {
+  const tabs = document.querySelectorAll('.level-tab');
+  const sections = document.querySelectorAll('section[data-level]');
+  const indicator = document.querySelector('.level-indicator');
+  const tabsContainer = document.querySelector('.level-tabs');
+
+  function positionIndicator(activeBtn) {
+    const btnRect = activeBtn.getBoundingClientRect();
+    const containerRect = tabsContainer.getBoundingClientRect();
+    indicator.style.width = btnRect.width + 'px';
+    indicator.style.transform = `translateX(${btnRect.left - containerRect.left}px)`;
+  }
+
+  function setActive(level) {
+    let activeBtn = null;
+    tabs.forEach(t => {
+      const isActive = t.dataset.level === level;
+      t.classList.toggle('active', isActive);
+      if (isActive) activeBtn = t;
+    });
+    tabsContainer.dataset.activeLevel = level;
+    if (activeBtn) positionIndicator(activeBtn);
+
+    sections.forEach(sec => {
+      const secLevel = sec.dataset.level;
+      const match = level === 'all' || secLevel === level;
+      sec.classList.toggle('hidden', !match);
+      sec.classList.toggle('visible', match);
+    });
+
+    // Jump-CTA buttons only make sense when a single level is isolated
+    // (they bridge "end of this filtered list" -> "next topic")
+    document.querySelectorAll('.jump-cta[data-cta-for]').forEach(cta => {
+      cta.classList.toggle('visible', cta.dataset.ctaFor === level);
+    });
+
+    // Sections changed height — if the viewport bottom now overshoots the
+    // content, snap back so the user isn't stranded in empty space.
+    requestAnimationFrame(() => {
+      const bottom = document.body.scrollHeight - window.innerHeight;
+      if (window.scrollY > bottom && bottom > 0) window.scrollTo({ top: bottom });
+    });
+  }
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => setActive(tab.dataset.level));
+  });
+
+  // Keep the pill aligned with its button on resize / orientation change
+  window.addEventListener('resize', () => {
+    const current = document.querySelector('.level-tab.active');
+    if (current) positionIndicator(current);
+  });
+
+  // Initialize
+  setActive('all');
+
+  // ===== "Jump to next/prev section" buttons =====
+  document.querySelectorAll('[data-jump-to], [data-jump-back]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const level = btn.dataset.jumpTo || btn.dataset.jumpBack;
+      const targetId = btn.dataset.jumpTarget;
+      setActive(level);
+      // Sections animate in over ~0.2s (display:none -> block); wait for the
+      // transition to finish so scrollIntoView finds a laid-out target.
+      setTimeout(() => {
+        const target = targetId ? document.getElementById(targetId) : null;
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 250);
+    });
+  });
+})();
+
+</script>
+</body>
+</html>
